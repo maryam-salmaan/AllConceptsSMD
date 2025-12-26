@@ -74,7 +74,7 @@ public class Frag2 extends Fragment {
                         String description = etDesc.getText().toString();
 
                         if(!title.equals("") && !description.equals("")) {
-                            ModalClassNotes note = new ModalClassNotes(title, description);
+                            ModalClassNotes note = new ModalClassNotes( title, description);
                             notes.add(note);
                             adapter.notifyDataSetChanged();
                         }

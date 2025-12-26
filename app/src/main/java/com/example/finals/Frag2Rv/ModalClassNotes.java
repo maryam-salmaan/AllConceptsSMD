@@ -9,6 +9,7 @@ public class ModalClassNotes {
         Description = description;
     }
 
+
     public String getTitle() {
         return title;
     }

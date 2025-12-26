@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.finals.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,6 +55,7 @@ public class fragvolly extends Fragment {
 
         noteList = new ArrayList<>();
         adapter = new NoteAdapter(noteList);
+        recyclerView.setAdapter(adapter);
 
         adapter.setListener(new NoteAdapter.OnNoteActionListener() {
             @Override
@@ -67,7 +69,7 @@ public class fragvolly extends Fragment {
             }
         });
 
-        recyclerView.setAdapter(adapter);
+
 
         fetchNotes();
 
@@ -141,23 +143,38 @@ public class fragvolly extends Fragment {
     }
 
     // ---------------- PUT ----------------
+// ---------------- PUT ----------------
     private void updateNote(Note note, int position) {
         String url = BASE_URL + "/" + note.getId();
 
-        StringRequest request = new StringRequest(
-                Request.Method.PUT,
-                url,
-                response -> {
-                    note.setTitle(note.getTitle() + " (Updated)");
-                    adapter.notifyItemChanged(position);
-                },
-                error -> Toast.makeText(requireContext(),
-                        "UPDATE failed", Toast.LENGTH_SHORT).show()
-        );
+        try {
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("title", note.getTitle() + " (Updated)");
+            jsonBody.put("body", note.getDescription());
+            jsonBody.put("userId", 1);
 
-        VolleySingleton.getInstance(requireContext())
-                .addToRequestQueue(request);
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.PUT,
+                    url,
+                    jsonBody,
+                    response -> {
+                        // Update local data after server confirms success
+                        note.setTitle(note.getTitle() + " (Updated)");
+                        adapter.notifyItemChanged(position);
+                        Toast.makeText(requireContext(), "UPDATE successful", Toast.LENGTH_SHORT).show();
+                    },
+                    error -> Toast.makeText(requireContext(),
+                            "UPDATE failed", Toast.LENGTH_SHORT).show()
+            );
+
+            VolleySingleton.getInstance(requireContext())
+                    .addToRequestQueue(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
 
     // ---------------- DELETE ----------------
     private void deleteNote(Note note, int position) {

@@ -2,10 +2,13 @@ package com.example.finals;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.finals.Frag2Rv.ModalClassNotes;
+
+import java.util.ArrayList;
 
 public class SQLiteDb {
    private final String db_name = "UserNotes";
@@ -99,6 +102,28 @@ public class SQLiteDb {
         db.close();
    
     }
+
+    public ArrayList<ModalClassNotes> getAllNotes() {
+        ArrayList<ModalClassNotes> list = new ArrayList<>();
+
+        SQLiteDatabase db = openHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                String title = cursor.getString(1);
+                String desc = cursor.getString(2);
+
+                list.add(new ModalClassNotes(title, desc));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return list;
+    }
+
 
 
 

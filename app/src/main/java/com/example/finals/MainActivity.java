@@ -1,5 +1,6 @@
 package com.example.finals;
 
+
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
+
+
 public class MainActivity extends AppCompatActivity implements Frag1.onItemClicked {
 
     TabLayout tl;
@@ -35,11 +38,6 @@ public class MainActivity extends AppCompatActivity implements Frag1.onItemClick
     public void onItemClick(int pos) {
 
     }
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements Frag1.onItemClick
                 super.onPageSelected(position);
                 TabLayout.Tab tab = tl.getTabAt(position);
 
-                    BadgeDrawable bd = tab.getOrCreateBadge();
-                    bd.setNumber(0);
-                    bd.setVisible(false);
+                BadgeDrawable bd = tab.getOrCreateBadge();
+                bd.setNumber(0);
+                bd.setVisible(false);
 
             }
         });

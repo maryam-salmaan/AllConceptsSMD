@@ -10,10 +10,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.finals.MainPkg.ViewPagerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+
+
+
 public class Login extends AppCompatActivity {
 
-    EditText etUserName, etPassword, etConfirmPassword;
+    EditText etemail, etPassword, etConfirmPassword;
     Button btnEnter, btnToggle;
+    FirebaseAuth mAuth;
 
     int mode = 1; //Login
 
@@ -25,6 +31,7 @@ public class Login extends AppCompatActivity {
         init();
 
         SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+
 
         // Auto login
         if (sp.getBoolean("loggedIn", false)) {
@@ -47,28 +54,35 @@ public class Login extends AppCompatActivity {
         btnEnter.setOnClickListener(v -> handleAuth());
     }
     private void handleAuth() {
-        String username = etUserName.getText().toString().trim();
+        String email = etemail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
         SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
         if (mode == 1) { // LOGIN
-            String savedUser = sp.getString("username", "");
-            String savedPass = sp.getString("password", "");
 
-            if (username.equals(savedUser) && password.equals(savedPass)) {
-                editor.putBoolean("loggedIn", true);
-                editor.apply();
-                launchmain();
-            } else {
-                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-            }
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Login success
+                            editor.putBoolean("loggedIn", true);
+                            editor.apply();
+                            launchmain();
+                        } else {
+                            Toast.makeText(this,
+                                    task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
         } else { // REGISTER
+
+
+
             String confirm = etConfirmPassword.getText().toString().trim();
 
-            if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+            if (email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
                 Toast.makeText(this, "All fields required", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -78,24 +92,40 @@ public class Login extends AppCompatActivity {
                 return;
             }
 
-            editor.putString("username", username);
-            editor.putString("password", password);
-            editor.putBoolean("loggedIn", true);
-            editor.apply();
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // User created successfully
+                            editor.putString("email", email);
+                            editor.putString("password", password);
+                            editor.putBoolean("loggedIn", true);
+                            editor.apply();
 
-            launchmain();
+                            launchmain();
+                        } else {
+                            // Error
+                            Toast.makeText(this,
+                                    task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+
         }
     }
 
     public void launchmain(){
 
-        Intent intent = new Intent(Login.this, MainActivity.class);
+        Intent intent = new Intent(Login.this, Logout.class);
         startActivity(intent);
         finish();
     }
 
     public void init(){
-        etUserName = findViewById(R.id.etUserName);
+        mAuth = FirebaseAuth.getInstance();
+
+        etemail = findViewById(R.id.etemail);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnEnter = findViewById(R.id.btnEnter);

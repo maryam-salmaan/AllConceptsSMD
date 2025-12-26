@@ -68,7 +68,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         ViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.tvTitle3);
-            desc = itemView.findViewById(R.id.tvDesc);
+            desc = itemView.findViewById(R.id.tvDesc2);
         }
     }
 }

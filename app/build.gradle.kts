@@ -42,6 +42,7 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.firebase:firebase-database:20.3.2")
     implementation(libs.firebase.database)
+    implementation(libs.firebase.auth)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
